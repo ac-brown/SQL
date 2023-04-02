@@ -1,0 +1,64 @@
+CREATE TABLE actors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fullname TEXT,
+    gender TEXT);
+    
+INSERT INTO actors (fullname, gender) VALUES ("Robert Downey Jr", "M");
+INSERT INTO actors (fullname, gender) VALUES ("Samuel L. Jackson", "M");
+INSERT INTO actors (fullname, gender) VALUES ("Zoe Saldana", "F");
+INSERT INTO actors (fullname, gender) VALUES ("Kate Winslet", "F");
+INSERT INTO actors (fullname, gender) VALUES ("Jack Black", "M");
+INSERT INTO actors (fullname, gender) VALUES ("Dwayne Johnson", "M");
+INSERT INTO actors (fullname, gender) VALUES ("Drew Barrymore", "F");
+INSERT INTO actors (fullname, gender) VALUES ("Adam Sandler", "M");
+INSERT INTO actors (fullname, gender) VALUES ("Jennifer Aniston", "F");
+INSERT INTO actors (fullname, gender) VALUES ("Vin Diesel", "M");
+INSERT INTO actors (fullname, gender) VALUES ("Brie Larson", "F");
+
+CREATE TABLE movies (
+    actor_id INTEGER,
+    movie TEXT,
+    genre TEXT,
+    release_year INTEGER);
+    
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("1","Avengers: Endgame", "superhero action", "2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("2","Avengers: Endgame", "superhero action","2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("3","Avengers: Endgame", "superhero action","2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("10","Avengers: Endgame", "superhero action","2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("11","Avengers: Endgame", "superhero action","2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("3", "Avatar 2","science fiction action","2022");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("4", "Avatar 2", "science fiction action","2022");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("10", "Avatar 2", "science fiction action","2022");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("4","The Holiday", "romantic comedy", "2006");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("5","The Holiday","romantic comedy","2006");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("5","Jumaji:The Next Level","fantasy adventure comedy","2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("6","Jumaji:The Next Level", "fantasy adventure comedy","2019");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("7","Blended","romantic comedy","2014");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("8","Blended","romantic comedy","2014");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("8","Just Go With It","romantic comedy","2011");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("9","Just Go With It","romantic comedy","2011");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("10","Fast X", "action adventure","2023");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("11","Fast X", "action adventure","2023");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("1","Iron Man","superhero action","2008");
+INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("2","Iron Man", "superhero action","2008");
+
+SELECT * FROM actors;
+
+SELECT actor_id, fullname, gender, movie, genre, release_year 
+FROM actors JOIN movies 
+ON actors.id=movies.actor_id 
+ORDER BY actor_id;
+
+--What actors played in movies in the comedy genre?
+SELECT fullname, movie, genre 
+FROM movies JOIN actors 
+ON movies.actor_id=actors.id 
+WHERE genre LIKE "%comedy%";
+
+--Which actors played in Avengers: Endgame?
+SELECT actors.fullname AS actor, gender, movie 
+FROM actors JOIN movies 
+ON actors.id=movies.actor_id 
+WHERE movie= "Avengers: Endgame"
+
+--Who starred in movies released in the 2010's?
