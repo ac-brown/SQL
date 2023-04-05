@@ -42,7 +42,7 @@ INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("11","Fast X",
 INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("1","Iron Man","superhero action","2008");
 INSERT INTO movies (actor_id, movie, genre, release_year) VALUES ("2","Iron Man", "superhero action","2008");
 
-SELECT * FROM actors;
+--Show all actor and movie details
 
 SELECT actor_id, fullname, gender, movie, genre, release_year 
 FROM actors JOIN movies 
@@ -50,15 +50,52 @@ ON actors.id=movies.actor_id
 ORDER BY actor_id;
 
 --What actors played in movies in the comedy genre?
+
 SELECT fullname, movie, genre 
 FROM movies JOIN actors 
 ON movies.actor_id=actors.id 
 WHERE genre LIKE "%comedy%";
 
 --Which actors played in Avengers: Endgame?
+
 SELECT actors.fullname AS actor, gender, movie 
 FROM actors JOIN movies 
 ON actors.id=movies.actor_id 
 WHERE movie= "Avengers: Endgame"
 
+--Display the movies in three categories: 2000's, 2010's, and 2020's.
+
+SELECT movie, genre, release_year, 
+CASE WHEN release_year >= 2020 THEN "2020's"
+WHEN release_year >= 2010 THEN "2010's"
+ELSE "2000's" END AS movie_release_year 
+FROM movies JOIN actors ON actors.id=movies.actor_id
+GROUP BY movie ORDER BY movie_release_year DESC;
+
 --Who starred in movies released in the 2010's?
+
+SELECT fullname,movie, 
+CASE WHEN release_year >= 2020 THEN "2020's"
+WHEN release_year >= 2010 THEN "2010's"
+ELSE "2000's" END AS movie_release_year 
+FROM movies JOIN actors ON actors.id=movies.actor_id
+WHERE movie_release_year= "2010's" 
+ORDER BY movie_release_year DESC;
+
+--What women starred in movies released in the 2010's
+
+SELECT fullname, movie, gender, 
+CASE WHEN release_year >= 2020 THEN "2020's"
+WHEN release_year >= 2010 THEN "2010's"
+ELSE "2000's" END AS movie_release_year 
+FROM movies JOIN actors ON actors.id=movies.actor_id
+WHERE movie_release_year= "2010's" AND gender="F";
+
+--Show many actors played in action movies.
+
+SELECT fullname, genre, genre LIKE "%action%" AS action_movie
+FROM actors JOIN movies 
+ON actors.id=movies.actor_id 
+GROUP BY fullname, action_movie;
+
+--What are the newest and oldest movie?
