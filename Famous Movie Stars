@@ -97,5 +97,3 @@ SELECT fullname, genre, genre LIKE "%action%" AS action_movie
 FROM actors JOIN movies 
 ON actors.id=movies.actor_id 
 GROUP BY fullname, action_movie;
-
---What are the newest and oldest movie?
