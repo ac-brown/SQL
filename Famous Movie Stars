@@ -91,9 +91,16 @@ ELSE "2000's" END AS movie_release_year
 FROM movies JOIN actors ON actors.id=movies.actor_id
 WHERE movie_release_year= "2010's" AND gender="F";
 
---Show many actors played in action movies.
+--Show how many actors played in action movies.
 
 SELECT fullname, genre, genre LIKE "%action%" AS action_movie
 FROM actors JOIN movies 
 ON actors.id=movies.actor_id 
 GROUP BY fullname, action_movie;
+
+--What is Vin Vin Diesels oldest and newest movie?
+
+SELECT fullname, MIN(release_year) AS oldest, MAX(release_year) AS newest
+FROM actors JOIN movies 
+ON actors.id=movies.actor_id
+WHERE fullname="Vin Diesel";
