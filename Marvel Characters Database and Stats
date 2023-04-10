@@ -42,28 +42,33 @@ INSERT INTO marvels VALUES(26, "Professor X", 58, "Good", "Male", 1.83, 86, "EUA
 
 --Show all marvel character. 
 
-SELECT * FROM MARVELS;
+SELECT * FROM marvels;
 
 --Display all characters alphabetically.
 
-SELECT * FROM MARVELS ORDER BY name ASC;
+SELECT * FROM marvels ORDER BY name ASC;
 
 --What is the average height and weight of characters that are male from USA and EUA?
 
-SELECT AVG(height_m) AS avg_height,AVG(weight_kg) AS avg_weight, hometown FROM marvels 
-WHERE gender= "Male" AND hometown ="USA" OR hometown="EUA" GROUP BY hometown; 
+SELECT AVG(height_m) AS avg_height, AVG(weight_kg) AS avg_weight, hometown 
+FROM marvels WHERE gender= "Male" AND hometown ="USA" OR hometown="EUA"
+GROUP BY hometown; 
 
 --What are the highest and lowest strength scores in each alignment? 
 
-SELECT alignment, MAX(strength), MIN(strength) from marvels GROUP BY alignment;
+SELECT alignment, MAX(strength), MIN(strength) 
+FROM marvels GROUP BY alignment;
 
 --Which characters weigh less than 100kg and have a speed score above 4? Grouped by hometown.
 
-SELECT * FROM marvels WHERE weight_kg <100 AND speed > 4; 
+SELECT * FROM marvels 
+WHERE weight_kg <100 AND speed > 4; 
 
 --How many characters are from each hometown?
 
-SELECT hometown, COUNT (*) AS "characters" FROM marvels GROUP BY hometown ORDER BY characters DESC;
+SELECT hometown, COUNT (*) AS "characters" 
+FROM marvels GROUP BY hometown 
+ORDER BY characters DESC;
 
 --What are the average scores by hometown?
 
