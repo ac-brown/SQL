@@ -33,15 +33,13 @@ SELECT SUM(quantity) * price AS revenue, product
 FROM BIT_DB.JanSales
 GROUP BY product;
 
---Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, 
-how many of each were sold, and what was the total revenue?
+--Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
 SELECT Product, SUM(Quantity), SUM(Quantity) * price AS revenue
 FROM BIT_DB.FebSales
 WHERE location = '548 Lincoln St, Seattle, WA 98101'
 GROUP BY Product;
 
---How many customers ordered more than 2 products at a time in February, 
-and what was the average amount spent for those customers?
+--How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
 SELECT COUNT(cust.acctnum), AVG(quantity * price) 
 FROM BIT_DB.FebSales Feb
 JOIN BIT_DB.customers cust 
@@ -49,3 +47,9 @@ ON Feb.orderid = cust.order_id
 WHERE Feb.Quantity > 2 
 AND length(orderID) = 6 
 AND orderID <> 'Order ID';
+
+--List all the products sold in Los Angeles in February, and include how many of each were sold.
+SELECT Product, sum(Quantity)
+FROM BIT_DB.FebSales
+WHERE location LIKE '%Los Angeles%'
+GROUP BY Product;
