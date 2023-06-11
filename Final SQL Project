@@ -1,0 +1,109 @@
+In this SQL, I worked with a dataset which represents a digital media store and includes tables for artists, albums, media tracks, invoices, and customers.
+This database included 11 tables from which I cleaned, extracted, and organized the data to answer various questions a company may have. 
+
+
+--Show Customers who are not in Canada.
+SELECT CustomerID, FirstName, LastName, Country 
+FROM customers
+WHERE Country != 'Canada';
+
+--Show only the Customers from the US.
+SELECT * FROM customers
+WHERE Country = 'USA';
+
+--Find the Invoices of customers who are from France. Show the full name, Invoice ID, Date of the invoice, and billing country.
+SELECT c.FirstName, c.LastName, inv.InvoiceID, inv.InvoiceDate, inv.BillingCountry
+FROM invoices inv
+JOIN customers c 
+ON inv.CustomerId = c.CustomerID
+WHERE BillingCountry = 'France';
+
+--Show the Employees who work in Sales.
+SELECT * FROM employees
+WHERE Title LIKE '%Sales%';
+
+--Find a unique/distinct list of billing cities from the Invoice table.
+SELECT DISTINCT BillingCountry
+FROM invoices;
+
+--Create a query that shows the invoices associated with each Sales Agent. 
+SELECT em.FirstName, em.LastName, inv.InvoiceID
+FROM employees em
+JOIN customers c ON c.SupportRepID = em.EmployeeID
+JOIN invoices inv ON inv.CustomerID = c.CustomerID;
+
+--Count the number of invoices associated with each agent.
+SELECT em.FirstName, em.LastName, COUNT(inv.InvoiceID)
+FROM employees em
+JOIN customers c ON c.SupportRepID = em.EmployeeID
+JOIN invoices inv ON inv.CustomerID = c.CustomerID
+GROUP BY em.FirstName;
+
+--Show the Customer name, Country, and Invoice total for all invoices and customers with a listed Billing Postal Code.
+SELECT c.FirstName, c.LastName, c.Country, inv.Total, inv.BillingPostalCode
+FROM invoices inv
+JOIN customers c
+ON c.CustomerId = inv.CustomerId
+WHERE inv.BillingPostalCode IS NOT NULL;
+
+--How many Invoices were there in 2013?
+SELECT COUNT(*)
+FROM invoices
+WHERE InvoiceDate LIKE '2013%';
+
+--What are the total sales for 2010 rounded to the nearest dollar?
+SELECT ROUND(SUM(Total))
+FROM invoices
+WHERE InvoiceDate BETWEEN '2010-01-01' AND '2010-12-31';
+
+--Write a query that shows the track name with each corresponding Genre.
+SELECT t.Name AS Track_Name, g.Name AS Genre
+FROM tracks t
+FULL JOIN genres g
+ON g.GenreId = t.GenreId;
+
+--Write a query that includes the purchased track name AND album name with each invoice line ID.
+SELECT t.Name AS Track, al.Title AS Album_Title, i.InvoiceLineId
+FROM invoice_items i
+JOIN tracks t ON i.TrackID = t.TrackID
+JOIN albums al ON al.AlbumId = t.AlbumId;
+
+--Provide a query that shows all the Tracks, along with the Media type, Genre, Unit Price, and Album name.
+SELECT t.Name AS Track, med.Name AS Media_Type, g.Name AS Genre, al.Title AS Album_Name, t.UnitPrice AS Unit_Price
+FROM tracks t
+JOIN media_types med ON t.MediaTypeId = med.MediaTypeId
+JOIN genres g ON t.GenreId = g.GenreId
+JOIN albums al ON t.AlbumId = al.AlbumId;
+
+--Show the total dollar amount of purchases made by each customer.
+SELECT c.FirstName, c.LastName, c.Email, SUM(inv.Total) AS Total
+FROM customers c
+JOIN invoices inv ON c.CustomerId = inv.CustomerId
+GROUP BY c.LastName
+ORDER BY Total ASC;
+
+--Which customers spent the most in purchases in 2009?
+SELECT c.FirstName, c.LastName, c.Email, SUM(inv.Total) AS Total
+FROM customers c
+JOIN invoices inv ON c.CustomerId = inv.CustomerId
+WHERE InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+GROUP BY c.LastName
+ORDER BY Total DESC
+LIMIT 3;
+
+--Who was the highest achieving Sales Agent based on sales?
+SELECT em.FirstName, em.LastName, SUM(inv.Total) AS Total
+FROM employees em
+JOIN customers c ON c.SupportRepId = em.EmployeeId
+JOIN invoices inv ON inv.CustomerId = c.CustomerId
+WHERE em.Title LIKE '%Agent%'
+GROUP BY em.LastName
+ORDER BY Total DESC
+LIMIT 1;
+
+--How many tracks belong to each Genre?
+SELECT g.GenreId, g.Name, COUNT(t.TrackId) AS Tracks
+FROM genres g
+JOIN tracks t ON t.GenreId = g.GenreId
+GROUP BY g.GenreId
+ORDER BY Tracks DESC;
