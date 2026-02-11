@@ -1,0 +1,160 @@
+Section 1, Cost of Care Analysis- What drives total cost of care?
+
+Cost by Department: Which departments are the most expensive? 
+  SELECT department,
+  ROUND(AVG(total_cost_usd), 2) AS avg_cost
+  FROM Patients
+  GROUP BY department
+  ORDER BY avg_cost DESC;
+The highest cost per admission occurs in Cardiology at approximately 3,311.22 followed by Polyclinic at $3,302.75. 
+
+Length of Stay vs Cost: Does a longer stay drive cost?
+  SELECT 
+  CASE
+  WHEN length_of_stay_days <= 3 THEN 'Short stay (1–3 days)'
+  WHEN length_of_stay_days <= 8 THEN 'Moderate stay (4–8 days)'
+  ELSE 'Long stay (9+ days)'
+  END AS stay_group,
+  COUNT(*) AS patients,
+  ROUND(AVG(total_cost_usd), 2) AS avg_cost
+  FROM Patients
+  GROUP BY stay_group;
+Average total cost per admission increases with length of stay. Short stays (1–3 days) average $2,329.94, medium stays (4–8 days) average $4,155.97, and long stays (9–11 days) average $$6,049.75. Length of stay appears to be a major cost driver which indicates opportunities for improvements without compromising care quality.
+
+Complications Impact: Do patient complications raise costs?
+  SELECT complications,
+  COUNT(*) AS patient_count,
+  ROUND(AVG(total_cost_usd), 2) AS avg_cost,
+  MIN(total_cost_usd) AS min_cost,
+  MAX(total_cost_usd) AS max_cost
+  FROM patients
+  GROUP BY complications;
+Patients experiencing complications average $3,630.65 in cost, compared to $3,202.33 for patients without complications. Complications significantly increase financial burden, highlighting the economic value of preventative care and quality improvement initiatives
+
+Emergency vs Scheduled Admissions: Are emergency admissions more expensive?
+  SELECT admission_type,
+  COUNT(*) AS admissions,
+  ROUND(AVG(total_cost_usd), 2) AS avg_cost
+  FROM patients
+  GROUP BY admission_type;
+Emergency admissions average $3,266.79, which is slightly lower than scheduled admissions at $3,276.92. 
+
+Chronic Conditions vs Cost: Do Chronic conditions increase cost?
+  SELECT chronic_condition,
+  COUNT(*) AS patient_count,
+  ROUND(AVG(total_cost_usd), 2) AS avg_cost
+  FROM patients
+  GROUP BY chronic_condition;
+Patients with chronic conditions average $4,121.44, compared to those without chronic conditions at $2,690.54.
+
+
+Section 2, Readmission Risk- What factors are associated with 30-day readmission?
+
+Are complications linked to readmission?
+  SELECT complications,
+  COUNT(*) AS patient_count,
+  ROUND(AVG(readmitted_30d) *100.0, 1) AS readmit_rate
+  FROM patients
+  GROUP BY complications;
+Patients with complications show a readmission rate of 53.2%, while patients without complications only have a rate of 17.8%.
+
+Does longer stay reduce or increase readmission risk?
+  SELECT
+  CASE
+  WHEN length_of_stay_days <= 3 THEN 'Short stay (1–3 days)'
+  WHEN length_of_stay_days <= 8 THEN 'Moderate stay (4-8 days)'
+  ELSE 'Long stay (9-11 days)'
+  END AS stay_group,
+  COUNT(*) AS patient_count,
+  ROUND(AVG(readmitted_30d) * 100.0, 1) AS readmit_rate
+  FROM patients
+  GROUP BY stay_group;
+Readmission rates range increase as length of stay increase. Short stays (1–3 days) have a readmission rate of 19.0%, moderate stays (4–8 days) rise to 28.1%, and long stays (9–11 days) are highest at 36.6%.
+
+Do certain departments have higher readmission rates?
+  SELECT department, 
+  COUNT(*) AS patient_count,
+  ROUND(AVG(readmitted_30d) * 100.0, 1) AS readmit_rate
+  FROM patients
+  GROUP BY department
+  ORDER BY readmit_rate DESC;
+Yes, the department with the highest readmission rate is Neurology with 24.9%. The Cardiology department has the second highest rate with 24.8%
+
+Does satisfaction predict readmission?
+  SELECT satisfaction_score,
+  COUNT(*) AS patient_count,
+  ROUND(AVG(readmitted_30d) * 100.0, 1) AS readmit_rate
+  FROM patients
+  GROUP BY satisfaction_score
+  ORDER BY readmit_rate DESC;
+Patients with a satisfaction score of 2 have the highest readmission rate with 24.2% compared to the lowest rate of 21.1% for those that had a satisfaction score of 5.
+
+
+Section 3, Patient Experience Study- What influences patient satisfaction?
+
+Does wait time affect satisfaction?
+  SELECT
+  CASE
+  WHEN wait_time_min <= 20 THEN 'Short wait (0–20 min)'
+  WHEN wait_time_min <= 40 THEN 'Moderate wait (21–40 min)'
+  WHEN wait_time_min <= 60 THEN 'Long wait (41–60 min)'
+  ELSE 'Very long wait (60+ min)'
+  END AS wait_group,
+  COUNT(*) AS patients,
+  ROUND(AVG(satisfaction_score), 2) AS avg_satisfaction
+  FROM patients
+  GROUP BY wait_group
+  ORDER BY avg_satisfaction;
+Average satisfaction remains relatively stable across waits under 60 minutes but declines once waits exceed 60 minutes, dropping from 2.84 to 2.77.
+
+Do complications affect satisfaction scores?
+  SELECT complications,
+  COUNT(*) AS patients,
+  ROUND(AVG(satisfaction_score), 2) AS avg_satisfaction
+  FROM patients 
+  GROUP BY complications;
+Patients with complications average a satisfaction score of 2.77, which is lower compared to those without complications showing a score of 2.81. 
+
+Which departments score highest?
+  SELECT department,
+  COUNT(*) AS patients,
+  ROUND(AVG(satisfaction_score), 2) AS avg_satisfaction
+  FROM patients
+  GROUP BY department
+  ORDER BY avg_satisfaction DESC;
+The Polyclinic and Neurology departments report the highest average satisfaction scores both tied at 2.83, while the Oncology department scores the lowest with a 2.77.
+
+
+Section 4, Operational Efficiency- Where are inefficiencies in hospital operations?
+
+Which departments have the longest wait times?
+  SELECT department,
+  COUNT (*) AS patients,
+  ROUND(AVG(wait_time_min), 2) AS avg_wait_time
+  FROM patients
+  GROUP BY department
+  ORDER BY avg_wait_time DESC;
+The Polyclinic department averages 33.77 minutes per patient, with the ER following closely behind averaging at 33.67 minutes.
+
+Does higher procedure count increase stay?
+  SELECT
+  CASE WHEN procedures_count <= 1 THEN 'Low (0–1 procedures)' 
+  WHEN procedures_count <= 4 THEN 'Moderate (2–4 procedures)' 
+  ELSE 'High (5+ procedures)' END AS procedure_group,
+  COUNT(*) AS patients,
+  ROUND(AVG(length_of_stay_days), 2) AS avg_stay
+  FROM patients
+  GROUP BY procedure_group
+  ORDER BY avg_stay DESC;
+Patients with high procedure volume average about 4.6 days, while low procedure cases average around 3.2 days
+
+
+Section 5 — Time Trend Analysis: How do hospital metrics change over time?
+Which month saw the most admissions?
+  SELECT 
+  SUBSTR(admission_date, 1, INSTR(admission_date, ' ') - 1) AS month,
+  COUNT(*) AS admissions
+  FROM Patients
+  GROUP BY month
+  ORDER BY admissions DESC;
+There was a peak in admissions in March with 531 admissions, followed by May with 520 admissions.
