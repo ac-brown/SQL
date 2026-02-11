@@ -1,4 +1,4 @@
---Create a shoe store database
+---Create a shoe store database
 
 CREATE TABLE shoes(id integer primary key, shoe_style TEXT, price INTEGER, quantity_online INTEGER, colors INTEGER, in_store TEXT);
 
